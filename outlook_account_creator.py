@@ -891,23 +891,45 @@ class OutlookAccountCreator:
                 # Check if still at signup - might need manual intervention
                 if "signup.live.com" in current_url:
                     logging.warning("Still at signup page - check if manual steps needed")
-                    logging.warning("Waiting 3 minutes for manual intervention...")
-                    time.sleep(180)
-
-                    # Check again
-                    current_url = driver.current_url
-                    logging.info(f"URL after wait: {current_url}")
-
-                    if any(indicator in current_url for indicator in success_indicators):
-                        logging.info(f"✓ Account created successfully after manual intervention: {email}")
-                        return {
-                            'email': email,
-                            'password': password,
-                            'first_name': first_name,
-                            'last_name': last_name,
-                            'birth_date': f"{birth_year}-{birth_month:02d}-{birth_day:02d}",
-                            'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        }
+                    logging.warning("Waiting up to 3 minutes for manual intervention...")
+                    
+                    # Check URL every 5 seconds like CAPTCHA handling
+                    for i in range(36):  # 36 x 5 = 180 seconds (3 minutes)
+                        time.sleep(5)
+                        current_url = driver.current_url
+                        
+                        # Check if moved to success page
+                        if any(indicator in current_url for indicator in success_indicators):
+                            logging.info(f"✓ Account created successfully after manual intervention: {email}")
+                            return {
+                                'email': email,
+                                'password': password,
+                                'first_name': first_name,
+                                'last_name': last_name,
+                                'birth_date': f"{birth_year}-{birth_month:02d}-{birth_day:02d}",
+                                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            }
+                        
+                        # Check if no longer on signup page (moved forward)
+                        if "signup.live.com" not in current_url:
+                            logging.info(f"✓ Page moved forward after manual intervention")
+                            logging.info(f"Current URL: {current_url}")
+                            # Continue checking for success indicators
+                            if any(indicator in current_url for indicator in success_indicators):
+                                logging.info(f"✓ Account created successfully: {email}")
+                                return {
+                                    'email': email,
+                                    'password': password,
+                                    'first_name': first_name,
+                                    'last_name': last_name,
+                                    'birth_date': f"{birth_year}-{birth_month:02d}-{birth_day:02d}",
+                                    'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                                }
+                        
+                        if i % 6 == 0:  # Log every 30 seconds
+                            logging.info(f"Still waiting... ({(i+1)*5}s elapsed)")
+                    
+                    logging.warning(f"Manual intervention timeout. Final URL: {current_url}")
 
                 logging.error(f"Account creation unclear. Current URL: {current_url}")
                 self._take_screenshot(driver, "error_final")
