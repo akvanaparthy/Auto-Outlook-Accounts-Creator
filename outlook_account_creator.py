@@ -437,9 +437,9 @@ class OutlookAccountCreator:
 
                         # Scroll into view and click using JavaScript (avoids click interception)
                         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", month_button)
-                        time.sleep(0.2)
+                        time.sleep(0.05)
                         driver.execute_script("arguments[0].click();", month_button)
-                        time.sleep(0.5)
+                        time.sleep(0.2)
 
                         # Find and click the month option by text
                         try:
@@ -470,7 +470,7 @@ class OutlookAccountCreator:
                             logging.error(f"Error selecting month option: {e}")
                             raise
 
-                        time.sleep(0.3)
+                        time.sleep(0.1)
                     else:
                         raise Exception("Could not find Month field")
 
@@ -499,9 +499,9 @@ class OutlookAccountCreator:
                     if day_button:
                         # Scroll into view and click using JavaScript (avoids click interception)
                         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", day_button)
-                        time.sleep(0.2)
+                        time.sleep(0.05)
                         driver.execute_script("arguments[0].click();", day_button)
-                        time.sleep(0.5)
+                        time.sleep(0.2)
 
                         # Find and click the day option by text
                         try:
@@ -532,7 +532,7 @@ class OutlookAccountCreator:
                             logging.error(f"Error selecting day option: {e}")
                             raise
 
-                        time.sleep(0.3)
+                        time.sleep(0.1)
                     else:
                         raise Exception("Could not find Day field")
 
@@ -605,7 +605,7 @@ class OutlookAccountCreator:
                     self._take_screenshot(driver, "failed_dob")
                     return None
 
-                time.sleep(0.5)  # Reduced from 1s - Give page time to be ready for Next button
+                time.sleep(0.2)  # Give page time to be ready for Next button
 
                 # Try to click Next button after DOB - more robust approach
                 next_button_found = False
@@ -625,11 +625,11 @@ class OutlookAccountCreator:
                         )
                         # Use JavaScript click for better reliability
                         driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", next_button)
-                        time.sleep(0.3)
+                        time.sleep(0.1)
                         driver.execute_script("arguments[0].click();", next_button)
                         logging.info(f"✓ Clicked Next after country/DOB using: {selector_type}")
                         next_button_found = True
-                        time.sleep(1)  # Reduced from 2s - Wait for page to navigate
+                        time.sleep(0.5)  # Wait for page to navigate
                         break
                     except Exception as e:
                         logging.debug(f"Failed with selector {selector_type}: {e}")
@@ -1715,15 +1715,8 @@ class OutlookAccountCreator:
         # Caller is responsible for closing the driver when done
 
     def _take_screenshot(self, driver, name: str):
-        """Take screenshot for debugging"""
-        try:
-            import os
-            os.makedirs("screenshots", exist_ok=True)
-            filename = f"screenshots/{name}_{int(time.time())}.png"
-            driver.save_screenshot(filename)
-            logging.info(f"Screenshot saved: {filename}")
-        except Exception as e:
-            logging.error(f"Failed to save screenshot: {e}")
+        """Take screenshot for debugging - DISABLED for performance"""
+        pass  # Screenshots disabled to improve speed
 
     def create_bulk_accounts(
         self,
