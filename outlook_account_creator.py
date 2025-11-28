@@ -329,7 +329,7 @@ class OutlookAccountCreator:
                 password_input.clear()
                 password_input.send_keys(password)
                 logging.info(f"✓ Entered password")
-                time.sleep(0.3)  # Reduced from 1s
+                time.sleep(0.1)
 
                 # Click Next button - try multiple selectors
                 next_button = None
@@ -346,7 +346,7 @@ class OutlookAccountCreator:
                         next_button = driver.find_element(selector_type, selector_value)
                         next_button.click()
                         logging.info(f"✓ Clicked Next button")
-                        time.sleep(0.5)  # Reduced from 1s - Wait for next page to load
+                        time.sleep(0.3)  # Wait for next page to load
                         break
                     except:
                         continue
@@ -362,7 +362,7 @@ class OutlookAccountCreator:
 
             # STEP 3: Enter Country and DOB (this comes before name!)
             logging.info("Step 3: Entering Country and DOB...")
-            time.sleep(0.5)  # Reduced from 1s
+            time.sleep(0.2)
             self._take_screenshot(driver, "step3_country_dob_page")
 
             try:
@@ -645,7 +645,7 @@ class OutlookAccountCreator:
 
             # STEP 4: Enter name (comes AFTER country/DOB) - OR MAYBE IT'S CAPTCHA?
             logging.info("Step 4: Checking for name fields or CAPTCHA...")
-            time.sleep(0.5)  # Reduced from 1s
+            time.sleep(0.2)
             self._take_screenshot(driver, "step4_name_page")
             logging.info(f"Current URL: {driver.current_url}")
 
@@ -891,8 +891,8 @@ class OutlookAccountCreator:
                 # Check if still at signup - might need manual intervention
                 if "signup.live.com" in current_url:
                     logging.warning("Still at signup page - check if manual steps needed")
-                    logging.warning("Waiting 30 seconds for manual intervention...")
-                    time.sleep(30)
+                    logging.warning("Waiting 3 minutes for manual intervention...")
+                    time.sleep(180)
 
                     # Check again
                     current_url = driver.current_url
@@ -1638,12 +1638,12 @@ class OutlookAccountCreator:
                 logging.warning("="*60)
                 logging.warning(f"Current URL doesn't match expected success patterns")
                 logging.warning(f"URL: {current_url}")
-                logging.warning("Waiting 60 seconds for manual intervention...")
+                logging.warning("Waiting 3 minutes for manual intervention...")
                 logging.warning("Please complete any remaining steps manually")
                 logging.warning("="*60)
                 
                 # Wait and check periodically
-                for i in range(12):  # 12 x 5 seconds = 60 seconds
+                for i in range(36):  # 36 x 5 seconds = 180 seconds (3 minutes)
                     time.sleep(5)
                     current_url = driver.current_url
                     
@@ -1661,10 +1661,10 @@ class OutlookAccountCreator:
                             'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                         }
                     
-                    if i % 3 == 0:  # Log every 15 seconds
+                    if i % 6 == 0:  # Log every 30 seconds
                         logging.info(f"Still waiting... ({(i+1)*5}s elapsed)")
 
-                # After 60 seconds, return what we have
+                # After 3 minutes, return what we have
                 logging.warning(f"Manual intervention timeout. Final URL: {current_url}")
                 self._take_screenshot(driver, "keepopen_manual_timeout")
                 
