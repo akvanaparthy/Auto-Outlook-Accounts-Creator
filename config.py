@@ -8,8 +8,12 @@ OUTLOOK_IMAP_PORT = 993
 # Email domain
 EMAIL_DOMAIN = "outlook.com"
 
-# Password settings - FIXED PASSWORD FOR ALL ACCOUNTS
-FIXED_PASSWORD = "Outlook234!"  # Default password for all accounts (change as needed)
+# Password settings
+USE_RANDOM_PASSWORD = False  # Set to True to generate random passwords per account
+FIXED_PASSWORD = "Outlook234!"  # Used when USE_RANDOM_PASSWORD = False
+RANDOM_PASSWORD_LENGTH = 8  # Length of random password (6-12 recommended)
+# Supported symbols for random passwords (special characters allowed by Outlook)
+RANDOM_PASSWORD_SYMBOLS = "!@#$%&*"
 
 # Proxy settings
 PROXY_FILE = "proxies.txt"  # One proxy per line (http://ip:port or socks5://ip:port)

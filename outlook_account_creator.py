@@ -125,8 +125,46 @@ class OutlookAccountCreator:
         return username
 
     def generate_password(self) -> str:
-        """Generate password (returns fixed password from config)"""
-        return config.FIXED_PASSWORD
+        """Generate password based on config settings"""
+        if config.USE_RANDOM_PASSWORD:
+            # Generate random password with requirements:
+            # - Random capitalization (at least 1 uppercase)
+            # - Random symbols (at least 1 from supported symbols)
+            # - Random numbers (at least 1 digit)
+            import random
+            import string
+            
+            length = config.RANDOM_PASSWORD_LENGTH
+            
+            # Ensure minimum length of 6 for password requirements
+            if length < 6:
+                length = 6
+            
+            # Create character pools
+            lowercase = string.ascii_lowercase
+            uppercase = string.ascii_uppercase
+            digits = string.digits
+            symbols = config.RANDOM_PASSWORD_SYMBOLS
+            
+            # Ensure at least one of each required type
+            password_chars = [
+                random.choice(uppercase),  # At least 1 uppercase
+                random.choice(lowercase),  # At least 1 lowercase
+                random.choice(digits),     # At least 1 digit
+                random.choice(symbols)     # At least 1 symbol
+            ]
+            
+            # Fill remaining length with random mix of all characters
+            all_chars = lowercase + uppercase + digits + symbols
+            remaining_length = length - len(password_chars)
+            password_chars.extend(random.choices(all_chars, k=remaining_length))
+            
+            # Shuffle to avoid predictable pattern
+            random.shuffle(password_chars)
+            
+            return ''.join(password_chars)
+        else:
+            return config.FIXED_PASSWORD
 
     def create_account(self, proxy: Optional[str] = None) -> Optional[Dict]:
         """
