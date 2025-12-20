@@ -23,7 +23,7 @@ import config
 class OutlookAccountCreator:
     """Creates Outlook/Hotmail email accounts"""
 
-    SIGNUP_URL = "https://signup.live.com"
+    SIGNUP_URL = "https://signup.live.com/?lc=1033&mkt=en-US"
 
     def __init__(self, proxy: Optional[str] = None, headless: bool = True):
         """
@@ -298,7 +298,7 @@ class OutlookAccountCreator:
 
             # STEP 2: Enter password
             logging.info("Step 2: Entering password...")
-            self._take_screenshot(driver, "step2_password_page")
+            # Screenshot disabled for speed
 
             try:
                 # Try multiple selectors for password input
@@ -346,7 +346,7 @@ class OutlookAccountCreator:
                         next_button = driver.find_element(selector_type, selector_value)
                         next_button.click()
                         logging.info(f"✓ Clicked Next button")
-                        time.sleep(0.3)  # Wait for next page to load
+                        time.sleep(0.2)  # Wait for next page to load
                         break
                     except:
                         continue
@@ -403,7 +403,7 @@ class OutlookAccountCreator:
                 # Wait for DOB fields to load - Microsoft uses custom dropdowns, not <select>
                 try:
                     logging.info("Waiting for DOB fields to load...")
-                    time.sleep(0.5)  # Reduced from 1.5s - Give page time to fully render custom components
+                    time.sleep(0.2)  # Quick render check
 
                     # Strategy 1: Find Month dropdown button (custom dropdown widget)
                     month_button = None
@@ -629,7 +629,7 @@ class OutlookAccountCreator:
                         driver.execute_script("arguments[0].click();", next_button)
                         logging.info(f"✓ Clicked Next after country/DOB using: {selector_type}")
                         next_button_found = True
-                        time.sleep(0.5)  # Wait for page to navigate
+                        time.sleep(0.2)  # Wait for page to navigate
                         break
                     except Exception as e:
                         logging.debug(f"Failed with selector {selector_type}: {e}")
